@@ -23,7 +23,7 @@ public class Comment {
     private String content;
 
     @Column(name = "creation_time", columnDefinition = "TIMESTAMP", nullable = false)
-    private Timestamp creation_time;
+    private Timestamp creationTime;
 
     @ManyToOne
     @JoinColumn(name = "task_id", nullable = false)
@@ -33,5 +33,5 @@ public class Comment {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    protected User user;
+    private User user;
 }

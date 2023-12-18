@@ -22,7 +22,7 @@ public class User {
     @Column(name = "name", columnDefinition = "VARCHAR(40)", nullable = false)
     private String name;
 
-    @Column(name = "password", columnDefinition = "VARCHAR(40)", nullable = false)
+    @Column(name = "password", columnDefinition = "VARCHAR(100)", nullable = false)
     private String password;
 
     public User(String username, String email, String encode) {

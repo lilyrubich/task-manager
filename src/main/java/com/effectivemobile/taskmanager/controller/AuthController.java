@@ -2,12 +2,13 @@ package com.effectivemobile.taskmanager.controller;
 
 import com.effectivemobile.taskmanager.model.User;
 import com.effectivemobile.taskmanager.repository.UserRepository;
-import com.effectivemobile.taskmanager.security.LoginRequest;
-import com.effectivemobile.taskmanager.security.SignupRequest;
+import com.effectivemobile.taskmanager.security.authRequestBody.LoginRequest;
+import com.effectivemobile.taskmanager.security.authRequestBody.SignupRequest;
 import com.effectivemobile.taskmanager.security.UserDetailsImpl;
 import com.effectivemobile.taskmanager.security.jwt.JwtUtils;
 import com.effectivemobile.taskmanager.security.responseformat.JwtResponse;
 import com.effectivemobile.taskmanager.security.responseformat.MessageResponse;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -18,24 +19,20 @@ import org.springframework.web.bind.annotation.*;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
-@RequestMapping("taskmanager/auth")
+@RequestMapping("/taskmanager/auth")
 public class AuthController {
 
     @Autowired
     AuthenticationManager authenticationManager;
-
     @Autowired
     UserRepository userRepository;
-
     @Autowired
     PasswordEncoder encoder;
-
     @Autowired
     JwtUtils jwtUtils;
 
     @PostMapping("/signin")
-    public ResponseEntity<?> authenticateuser
-            (@RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
 
         org.springframework.security.core.Authentication authentication = authenticationManager.authenticate
                 (new UsernamePasswordAuthenticationToken
@@ -56,8 +53,7 @@ public class AuthController {
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<?> registerUser
-            (@RequestBody SignupRequest signUpRequest) {
+    public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {
 
         if (userRepository.existsByUsername(signUpRequest
                 .getUsername())) {

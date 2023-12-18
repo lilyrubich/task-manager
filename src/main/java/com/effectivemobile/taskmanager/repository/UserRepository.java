@@ -10,13 +10,13 @@ import java.util.Optional;
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
 
-    @Query(nativeQuery = true, value = "select * from taskmanager where name in(:username) limit 1")
+    @Query(nativeQuery = true, value = "select * from users where name in(:username) limit 1")
     Optional<User> findByUsername(String username);
 
     @Query(nativeQuery = true, value = "SELECT\n" +
             "    CASE WHEN EXISTS \n" +
             "    (\n" +
-            "        SELECT * FROM taskmanager WHERE name in(:username)\n" +
+            "        SELECT * FROM users WHERE name in(:username)\n" +
             "    )\n" +
             "    THEN 'TRUE'\n" +
             "    ELSE 'FALSE'\n" +
@@ -26,7 +26,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query(nativeQuery = true, value = "SELECT\n" +
             "    CASE WHEN EXISTS \n" +
             "    (\n" +
-            "        SELECT * FROM taskmanager WHERE email in(:email)\n" +
+            "        SELECT * FROM users WHERE email in(:email)\n" +
             "    )\n" +
             "    THEN 'TRUE'\n" +
             "    ELSE 'FALSE'\n" +

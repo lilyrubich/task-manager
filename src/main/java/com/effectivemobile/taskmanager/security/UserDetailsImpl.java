@@ -45,11 +45,11 @@ public class UserDetailsImpl implements UserDetails {
                 user.getPassword());
     }
 
-    @Override
+    /*@Override
     public String getUsername() {
         return username;
     }
-
+*/
     @Override
     public boolean isAccountNonExpired() {
         return true;
