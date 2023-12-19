@@ -40,17 +40,17 @@ All requests requires a basic authorization:
 ```
 GET /taskmanager/task/getTasksByReporter?offset={offset}&limit={limit}&id={id}
 
-Example URL: http://localhost:8080/taskmanager/task/getTasksByReporter?offset=0&limit=4&id=10
+Example URL: http://localhost:8081/taskmanager/task/getTasksByReporter?offset=0&limit=4&id=10
 ```
 ```
 GET /taskmanager/task/getTasksByAssignee?offset={offset}&limit={limit}&id={id}
 
-Example URL: http://localhost:8080/taskmanager/task/getTasksByAssignee?offset=0&limit=4&id=10
+Example URL: http://localhost:8081/taskmanager/task/getTasksByAssignee?offset=0&limit=4&id=10
 ```
 ```
 POST /taskmanager/task/add
 
-Example URL: http://localhost:8080/taskmanager/task/add
+Example URL: http://localhost:8081/taskmanager/task/add
 Example Request body:
 
 {
@@ -64,7 +64,7 @@ Example Request body:
 ```
 POST /taskmanager/task/update
 
-Example URL: http://localhost:8080/taskmanager/task/update
+Example URL: http://localhost:8081/taskmanager/task/update
 Example Request body:
 
 {
@@ -80,17 +80,17 @@ Example Request body:
 ```
 GET /taskmanager/task/updateStatus?id={id}&status={status}
 
-Example URL: http://localhost:8080/taskmanager/task/updateStatus?id=13&status=IN_PROGRESS
+Example URL: http://localhost:8081/taskmanager/task/updateStatus?id=13&status=IN_PROGRESS
 ```
 ```
 DELETE /taskmanager/task/delete?id={id}
 
-Example URL: http://localhost:8080/taskmanager/task/delete?id=22
+Example URL: http://localhost:8081/taskmanager/task/delete?id=22
 ```
 ```
 POST /taskmanager/comment/add
 
-Example URL: http://localhost:8080/taskmanager/comment/add
+Example URL: http://localhost:8081/taskmanager/comment/add
 Example Request body:
 
 {
@@ -101,7 +101,7 @@ Example Request body:
 ```
 GET /taskmanager/comment/getComments?id={id}
 
-Example URL: http://localhost:8080/taskmanager/comment/getComments?id=16
+Example URL: http://localhost:8081/taskmanager/comment/getComments?id=16
 ```
 
 
