@@ -6,9 +6,9 @@ import com.effectivemobile.taskmanager.model.User;
 import com.effectivemobile.taskmanager.repository.CommentRepository;
 import com.effectivemobile.taskmanager.repository.TaskRepository;
 import com.effectivemobile.taskmanager.repository.UserRepository;
+import com.effectivemobile.taskmanager.security.SecurityContextHolderFacade;
 import com.effectivemobile.taskmanager.transportObject.CommentJsonBody;
 import org.springframework.data.domain.Example;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
@@ -23,11 +23,13 @@ public class CommentService {
     private final CommentRepository commentRepository;
     private final UserRepository userRepository;
     private final TaskRepository taskRepository;
+    private SecurityContextHolderFacade securityContextHolderFacade;
 
-    public CommentService(CommentRepository commentRepository, UserRepository userRepository, TaskRepository taskRepository) {
+    public CommentService(CommentRepository commentRepository, UserRepository userRepository, TaskRepository taskRepository, SecurityContextHolderFacade securityContextHolderFacade) {
         this.commentRepository = commentRepository;
         this.userRepository = userRepository;
         this.taskRepository = taskRepository;
+        this.securityContextHolderFacade = securityContextHolderFacade;
     }
 
     public CommentJsonBody createComment(CommentJsonBody commentJsonBody) throws EntityNotFoundException {
@@ -35,10 +37,7 @@ public class CommentService {
         Comment comment = new Comment();
 
         //find reporter user
-        UserDetails userDetails = (UserDetails) SecurityContextHolder
-                .getContext()
-                .getAuthentication()
-                .getPrincipal();
+        UserDetails userDetails = securityContextHolderFacade.getAuthenticateUser();
         String username = userDetails.getUsername();
         User reporter = userRepository.findByUsername(username).get();
         comment.setUser(reporter);
@@ -71,6 +70,7 @@ public class CommentService {
                 .setContent(comment.getContent())
                 .setCreationTime(comment.getCreationTime())
                 .setTask(comment.getTask().getId())
+                .setUser(comment.getUser().getId())
                 .build();
     }
 }

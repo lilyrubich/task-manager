@@ -10,6 +10,6 @@ import java.util.List;
 @Repository
 public interface CommentRepository extends JpaRepository<Comment, Long> {
 
-    @Query(nativeQuery = true, value = "select * from comments where task_id in(:id)")
+    @Query(nativeQuery = true, value = "select * from comments where task_id in(:id) order by creation_time desc")
     List<Comment> getCommentsByTaskId(Long id);
 }

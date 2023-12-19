@@ -5,9 +5,11 @@ import com.effectivemobile.taskmanager.model.Task;
 import com.effectivemobile.taskmanager.model.User;
 import com.effectivemobile.taskmanager.repository.TaskRepository;
 import com.effectivemobile.taskmanager.repository.UserRepository;
+import com.effectivemobile.taskmanager.security.SecurityContextHolderFacade;
 import com.effectivemobile.taskmanager.transportObject.TaskJsonBody;
 import org.springframework.data.domain.Example;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.EntityNotFoundException;
@@ -18,19 +20,21 @@ public class TaskService {
 
     private final TaskRepository taskRepository;
     private final UserRepository userRepository;
+    private final SecurityContextHolderFacade securityContextHolderFacade;
 
-    public TaskService(TaskRepository taskRepository, UserRepository userRepository) {
+    public TaskService(TaskRepository taskRepository, UserRepository userRepository, SecurityContextHolderFacade securityContextHolderFacade) {
         this.taskRepository = taskRepository;
         this.userRepository = userRepository;
+        this.securityContextHolderFacade = securityContextHolderFacade;
     }
 
-    public List<TaskJsonBody> getTasksByAssigneeUser(Long id) {
-        List<Task> tasks = taskRepository.getTasksByAssigneeUser(id);
+    public List<TaskJsonBody> getTasksByAssigneeUser(Long id, PageRequest pageRequest) {
+        Page<Task> tasks = taskRepository.getTasksByAssigneeUser(id, pageRequest);
         return tasks.stream().map(t -> convertToTaskJsonBody(t)).toList();
     }
 
-    public List<TaskJsonBody> getTaskByReporter(Long id) {
-        List<Task> tasks = taskRepository.getTasksByReporter(id);
+    public List<TaskJsonBody> getTaskByReporter(Long id, PageRequest pageRequest) {
+        Page<Task> tasks = taskRepository.getTasksByReporter(id, pageRequest);
         return tasks.stream().map(t -> convertToTaskJsonBody(t)).toList();
     }
 
@@ -39,10 +43,7 @@ public class TaskService {
         Task task = convertToTask(taskJsonBody);
 
         //find reporter user
-        UserDetails userDetails = (UserDetails) SecurityContextHolder
-                .getContext()
-                .getAuthentication()
-                .getPrincipal();
+        UserDetails userDetails = securityContextHolderFacade.getAuthenticateUser();
         String username = userDetails.getUsername();
         User reporter = userRepository.findByUsername(username).get();
         task.setUserReporter(reporter);
@@ -76,10 +77,7 @@ public class TaskService {
         Task oldTask = getTaskAndCheck(taskJsonBody.getId());
 
         //if current user isn't reporter of the task
-        UserDetails userDetails = (UserDetails) SecurityContextHolder
-                .getContext()
-                .getAuthentication()
-                .getPrincipal();
+        UserDetails userDetails = securityContextHolderFacade.getAuthenticateUser();
         String username = userDetails.getUsername();
         User reporter = userRepository.findByUsername(username).get();
         if (reporter.getId() != oldTask.getUserReporter().getId()) {
@@ -98,7 +96,7 @@ public class TaskService {
         }
 
         taskRepository.save(updatedTask);
-        return taskJsonBody;
+        return convertToTaskJsonBody(taskRepository.findById(taskJsonBody.getId()).get());
     }
 
     public TaskJsonBody updateStatus(Long taskId, TaskStatus taskStatus) throws IllegalAccessException, EntityNotFoundException {
@@ -109,10 +107,7 @@ public class TaskService {
 
 
         //if current user isn't assignee of the task
-        UserDetails userDetails = (UserDetails) SecurityContextHolder
-                .getContext()
-                .getAuthentication()
-                .getPrincipal();
+        UserDetails userDetails = securityContextHolderFacade.getAuthenticateUser();
         String username = userDetails.getUsername();
         User assignee = userRepository.findByUsername(username).get();
         if (assignee.getId() != task.getUserAssignee().getId()) {
@@ -129,10 +124,7 @@ public class TaskService {
         Task task = getTaskAndCheck(id);
 
         //if current user isn't reporter of the task
-        UserDetails userDetails = (UserDetails) SecurityContextHolder
-                .getContext()
-                .getAuthentication()
-                .getPrincipal();
+        UserDetails userDetails = securityContextHolderFacade.getAuthenticateUser();
         String username = userDetails.getUsername();
         User reporter = userRepository.findByUsername(username).get();
         if (reporter.getId() != task.getUserReporter().getId()) {

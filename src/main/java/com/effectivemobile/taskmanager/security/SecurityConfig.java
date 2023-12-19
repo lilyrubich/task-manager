@@ -11,7 +11,6 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -30,16 +29,19 @@ public class SecurityConfig {
     @Autowired
     UserDetailsServiceImpl userDetailsService;
 
+    private static final String[] AUTH_LIST = {
+            "/taskmanager/comment/**",
+            "/taskmanager/task/**"
+    };
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http)
             throws Exception {
 
         http
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests((auth) -> auth
-                        .requestMatchers("/taskmanager/auth/**")
-                        .permitAll()
-                        .anyRequest().authenticated()
+                .authorizeHttpRequests(authorize -> authorize
+                        .requestMatchers(AUTH_LIST).authenticated()
+                        .anyRequest().permitAll()
                 )
                 .exceptionHandling((exception) -> exception.authenticationEntryPoint(unauthorizedHandler))
                 .httpBasic(withDefaults());
@@ -50,6 +52,7 @@ public class SecurityConfig {
                 UsernamePasswordAuthenticationFilter.class);
 
         return http.csrf().disable().build();
+
     }
 
     @Bean
@@ -78,5 +81,10 @@ public class SecurityConfig {
         authProvider.setPasswordEncoder(passwordEncoder());
 
         return authProvider;
+    }
+
+    @Bean
+    public SecurityContextHolderFacade securityContextHolderFacade() {
+        return new SecurityContextHolderFacade();
     }
 }

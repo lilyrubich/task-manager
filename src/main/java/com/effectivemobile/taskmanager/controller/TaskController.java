@@ -4,7 +4,7 @@ import com.effectivemobile.taskmanager.enums.TaskStatus;
 import com.effectivemobile.taskmanager.service.TaskService;
 import com.effectivemobile.taskmanager.transportObject.TaskJsonBody;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -16,30 +16,30 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/*API должно позволять получать задачи конкретного автора или исполнителя, а
-        также все комментарии к ним. Необходимо обеспечить фильтрацию и
-        пагинацию вывода.*/
+
 @RestController
 @RequestMapping("/taskmanager/task")
 public class TaskController {
 
-    @Autowired
     private final TaskService taskService;
 
     public TaskController(TaskService taskService) {
         this.taskService = taskService;
     }
 
-    //для всех юзеров
+
     @GetMapping("/getTasksByAssignee")
-    public List<TaskJsonBody> getTasksByAssigneeUser(@RequestParam Long id) {
-        return taskService.getTasksByAssigneeUser(id);
+    public List<TaskJsonBody> getTasksByAssigneeUser(@RequestParam Long id,
+                                                     @RequestParam("offset") Integer offset,
+                                                     @RequestParam("limit") Integer limit) {
+        return taskService.getTasksByAssigneeUser(id, PageRequest.of(offset, limit));
     }
 
-    //для всех юзеров
     @GetMapping("/getTasksByReporter")
-    public List<TaskJsonBody> getTasksByReporterUser(@RequestParam Long id) {
-        return taskService.getTaskByReporter(id);
+    public List<TaskJsonBody> getTasksByReporterUser(@RequestParam Long id,
+                                                     @RequestParam("offset") Integer offset,
+                                                     @RequestParam("limit") Integer limit) {
+        return taskService.getTaskByReporter(id, PageRequest.of(offset, limit));
     }
 
     @PostMapping("/add")
@@ -52,7 +52,6 @@ public class TaskController {
         }
     }
 
-    //только для создалей (task reporter)
     @PostMapping("/update")
     public TaskJsonBody updateTask(@Valid @RequestBody TaskJsonBody taskJsonBody) {
         try {
@@ -63,7 +62,6 @@ public class TaskController {
         }
     }
 
-    //только для исполнителей (task assignee)
     @GetMapping("/updateStatus")
     public TaskJsonBody updateStatus(@RequestParam Long id, @RequestParam TaskStatus status) {
         try {
@@ -74,7 +72,6 @@ public class TaskController {
         }
     }
 
-    //только для создалей (task reporter)
     @DeleteMapping("/delete")
     public void deleteTask(@RequestParam Long id) {
         try {

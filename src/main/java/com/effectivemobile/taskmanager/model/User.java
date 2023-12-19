@@ -25,7 +25,15 @@ public class User {
     @Column(name = "password", columnDefinition = "VARCHAR(100)", nullable = false)
     private String password;
 
+
     public User(String username, String email, String encode) {
+        this.name = username;
+        this.email = email;
+        this.password = encode;
+    }
+
+    public User(Long id, String username, String email, String encode) {
+        this.id = id;
         this.name = username;
         this.email = email;
         this.password = encode;
