@@ -1,0 +1,25 @@
+version: '3.7'
+networks:
+  task-net:
+services:
+  task-backend:
+    image: lilyrubich/task-manager
+    depends_on:
+      - task-db
+    ports:
+      - "8081:8080"
+    environment:
+      POSTGRES_PATH: task_db:5432/taskmanager
+    networks:
+      - task-net
+  task-db:
+    image: postgres:latest
+    ports:
+      - "5434:5432"
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_DB: taskmanager
+    networks:
+      - task-net
+    hostname: task_db

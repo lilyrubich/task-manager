@@ -2,7 +2,6 @@ package com.effectivemobile.taskmanager.model;
 
 import com.effectivemobile.taskmanager.enums.TaskPriority;
 import com.effectivemobile.taskmanager.enums.TaskStatus;
-import com.effectivemobile.taskmanager.transportObject.TaskJsonBody;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
